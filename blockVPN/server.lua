@@ -25,7 +25,11 @@ AddEventHandler('playerConnecting', function(playerName, setKickReason, deferral
 	PerformHttpRequest('http://check.getipintel.net/check.php?ip=' .. playerIP .. '&contact=' .. ownerEmail, function(statusCode, response, headers)
 		if response then
 			if tonumber(response) >= kickThreshold then
-				deferrals.done(kickReason)
+				if IsPlayerAceAllowed(source, "blockVPN.bypass") then
+					deferrals.done()
+				else 
+					deferrals.done(kickReason)
+				end
 				if printFailed then
 					print('[BlockVPN][BLOCKED] ' .. playerName .. ' has been blocked from joining with a value of ' .. tonumber(response))
 				end
