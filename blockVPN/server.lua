@@ -21,21 +21,24 @@ end
 AddEventHandler('playerConnecting', function(playerName, setKickReason, deferrals)
     deferrals.defer()
 	deferrals.update("Checking Player Information. Please Wait.")
-	playerIP = splitString(GetPlayerEP(source), ":")[1]
-	PerformHttpRequest('http://check.getipintel.net/check.php?ip=' .. playerIP .. '&contact=' .. ownerEmail, function(statusCode, response, headers)
-		if response then
-			if tonumber(response) >= kickThreshold then
-				if IsPlayerAceAllowed(source, "blockVPN.bypass") then
-					deferrals.done()
-				else 
+	playerIP = GetPlayerEP(source)
+	if string.match(playerIP, ":") then
+		playerIP = splitString(playerIP, ":")[1]
+	end
+	if IsPlayerAceAllowed(source, "blockVPN.bypass") then
+		deferrals.done()
+	else 
+		PerformHttpRequest('http://check.getipintel.net/check.php?ip=' .. playerIP .. '&contact=' .. ownerEmail, function(statusCode, response, headers)
+			if response then
+				if tonumber(response) >= kickThreshold then
 					deferrals.done(kickReason)
+					if printFailed then
+						print('[BlockVPN][BLOCKED] ' .. playerName .. ' has been blocked from joining with a value of ' .. tonumber(response))
+					end
+				else 
+					deferrals.done()
 				end
-				if printFailed then
-					print('[BlockVPN][BLOCKED] ' .. playerName .. ' has been blocked from joining with a value of ' .. tonumber(response))
-				end
-			else 
-				deferrals.done()
 			end
-		end
-	end)
+		end)
+	end
 end)
