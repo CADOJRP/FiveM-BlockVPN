@@ -5,7 +5,7 @@ local ownerEmail = ''             -- Owner Email (Required) - No account needed 
 local kickThreshold = 0.99        -- Anything equal to or higher than this value will be kicked. (0.99 Recommended as Lowest)
 local kickReason = 'We\'ve detected that you\'re using a VPN or Proxy. If you belive this is a mistake please contact the administration team.'
 local printFailed = true
-
+local maxPlayers = 32
 
 
 ------- DO NOT EDIT BELOW THIS LINE -------
@@ -19,7 +19,7 @@ function splitString(inputstr, sep)
 end
 
 AddEventHandler('playerConnecting', function(playerName, setKickReason, deferrals)
-	if GetNumPlayerIndices() < 32 then
+	if GetNumPlayerIndices() < maxPlayers then
 		deferrals.defer()
 		deferrals.update("Checking Player Information. Please Wait.")
 		playerIP = GetPlayerEP(source)
